@@ -1,3 +1,10 @@
 # Today I Learned...
 
 1일 1커밋을 통해 오늘 배운 것을 정리하는 페이지입니다.
+
+---
+
+## Season 3(3/18~6/25)
+
+### Statistics
+- <a href="https://github.com/ElApseR/TIL/blob/master/Statistics/Missing%20Value%20Imputation.md">Missing Value Imputation</a>
