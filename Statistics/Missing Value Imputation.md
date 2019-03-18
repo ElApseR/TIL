@@ -65,13 +65,13 @@ missing value는 연습용 데이터가 아닌 현실 데이터에 매우 자주
 ### 2-4. Multiple Imputation
 
 - 위에 나온 세 가지 방법은 모두 single imputation이다. 즉, 세 가지 방법 중 무엇을 쓰든지, 각 결측값에 대하여 딱 하나의 값만 계산된다. 이 경우, 추정된 값에 data의 문제 또는 imputation method 자체의 문제로 인한 bias가 발생할 수 있다. 또한, 우리가 사용한 방법이 해당 상황에 정말 맞지 않는 방법이어도 보정할 수가 없다.
-- ex) 각 도서관 회원의 도서관으로부터 거주지의 거리와 도서관 연체료에 대한 데이터가 있다. 연체료 값이 몇 개가 missing인 상황이다. single imputation으로 하면 각 missing value별로 단 하나의 값만 추정될 것이다. 이와 달리, multiple imputation은 single imputation을 여러번 수행하는 것을 의미한다. 예를 들어 hot deck methods로 선형회귀를 이용하며, bootstrap 방식으로 총 1000개의 row 중 50개의 row를 뽑아서 fitting을 한 뒤 imputation을 한다고 하자. 그럼 sample을 뽑을 때마다 회귀선의 회귀 계수가 각각 다르게 추정될 것이고, 그에 따라 이를 종합한 결측값의 추정치가 달라질 것이다. 일반적으로 multiple imputation은 5~10 번의 imputation을 독립적으로 수행한다. 이렇게 각각 수행한 결과 \5~10\개의 complete dataset이 추정될 것이다. 이를 이용하여 우리가 최종적으로 하고자 했던 계산을 한다. 예를 들어 평균적인 연체료를 계산하는 것이 궁극적인 목표였다면, \5~10\개의 평균 연체료가 구해진다. 그 뒤 이를 aggregate(pooling)하여 최종적인 평균 연체료를 구하는데, 예를 들어 aggregate function으로 mean을 사용한다면 최종적인 mean 하나가 나올 것이다.
+- ex) 각 도서관 회원의 도서관으로부터 거주지의 거리와 도서관 연체료에 대한 데이터가 있다. 연체료 값이 몇 개가 missing인 상황이다. single imputation으로 하면 각 missing value별로 단 하나의 값만 추정될 것이다. 이와 달리, multiple imputation은 single imputation을 여러번 수행하는 것을 의미한다. 예를 들어 hot deck methods로 선형회귀를 이용하며, bootstrap 방식으로 총 1000개의 row 중 50개의 row를 뽑아서 fitting을 한 뒤 imputation을 한다고 하자. 그럼 sample을 뽑을 때마다 회귀선의 회귀 계수가 각각 다르게 추정될 것이고, 그에 따라 이를 종합한 결측값의 추정치가 달라질 것이다. 일반적으로 multiple imputation은 5-10 번의 imputation을 독립적으로 수행한다. 이렇게 각각 수행한 결과 5-10개의 complete dataset이 추정될 것이다. 이를 이용하여 우리가 최종적으로 하고자 했던 계산을 한다. 예를 들어 평균적인 연체료를 계산하는 것이 궁극적인 목표였다면, 5-10개의 평균 연체료가 구해진다. 그 뒤 이를 aggregate(pooling)하여 최종적인 평균 연체료를 구하는데, 예를 들어 aggregate function으로 mean을 사용한다면 최종적인 mean 하나가 나올 것이다.
     - 즉, \hat{mu} = (\hat{mu}_1 + \hat{mu}_2 + ... + \hat{mu}_n)/n
 - multiple imputation은 총 세 단계이다.
     0. impute -> analyses -> aggregate(pooling)
     1. single imputation을 각 샘플 데이터셋에 대해 수행한다.
-        - \5~10\개의 imputed dataset
+        - 5-10개의 imputed dataset
     2. 도출된 complete dataset을 이용, 최종적으로 하고자 했던 analysis를 수행한다.
-        - \5~10\개의 추정된 mu
+        - 5-10개의 추정된 mu
     3. analysis의 결과를 aggregate하여 최종 결과를 도출하고, aggregated 되기 전 애들을 분석해본다. 얘네의 standard deviation을 분석하는 것이 대표적이며, standard deviation이 imputation 단계에서 뽑힌 데이터셋이 대표성을 가지고 있는지, 해당 imputation method가 적절했는지 생각해보아야 한다.
         - 최종적인 하나의 mu
