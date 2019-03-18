@@ -1,6 +1,7 @@
 # Today I Learned...
 
 ![typing](https://media.giphy.com/media/3o8doZFy4iPd8VBL8I/giphy.gif)
+<img src='https://media.giphy.com/media/3o8doZFy4iPd8VBL8I/giphy.gif' width=50% height=50% align=center>
 
 
 1일 1커밋을 통해 오늘 배운 것을 정리하는 페이지입니다.
