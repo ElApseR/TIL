@@ -11,6 +11,7 @@
 
 ### Statistics
 - <a href="https://github.com/ElApseR/TIL/blob/master/Statistics/Missing%20Value%20Imputation.md">Missing Value Imputation</a>
+- <a href="https://github.com/ElApseR/TIL/blob/master/Statistics/%EC%A0%95%EB%B3%B4%EC%9D%B4%EB%A1%A0.md">정보 이론</a>
 
 ### Deep Learning
 - <a href="https://github.com/ElApseR/TIL/blob/master/Deep%20Learning/GAN%20%EC%99%84%EC%A0%84%20%EC%A0%95%EB%B3%B5.md">GAN 완전 정복</a>
