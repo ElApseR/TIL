@@ -3,8 +3,8 @@
 *이 글은 <a href="https://machinelearningmastery.com/data-leakage-machine-learning/">Data Leakage in Machine Learning</a>에 저의 사견을 넣어 정리한 글입니다.*
 
 ## intro
-<img src="https://mblogthumb-phinf.pstatic.net/20160514_249/padi328366_1463234969276YhM6i_JPEG/%B0%EE%BC%BA2.jpg?type=w800">
-data leakage는 데이터를 이용한 예측 모델링을 하다 보면 의도치 않게 흔히 발생하는 문제입니다. 예측 모델링 단계에서 우리의 모델은 정해진 training set 이외의 데이터를 보아서는 안되지만, 그 선을 넘는 데이터를 보았을 때 일반적으로 data leakage가 발생했다고 말합니다. 즉, 우리의 모델이 **보지 말아야 할 것을 보았다** 는 의미입니다. 이 글에서는 아래의 내용들을 정리합니다.
+<img src="https://mblogthumb-phinf.pstatic.net/20160514_249/padi328366_1463234969276YhM6i_JPEG/%B0%EE%BC%BA2.jpg?type=w800"/>
+data leakage는 데이터를 이용한 예측 모델링을 하다 보면 의도치 않게 흔히 발생하는 문제입니다. 예측 모델링 단계에서 우리의 모델은 정해진 training set 이외의 데이터를 보아서는 안되지만, 그 선을 넘는 데이터를 보았을 때 일반적으로 data leakage가 발생했다고 말합니다. 즉, 우리의 모델이 **보지 말아야 할 것을 보았다**는 의미입니다. 이 글에서는 아래의 내용들을 정리합니다.
 
 - 예측 모델링에서 data leakage란 무엇인가
 - data leakage가 나타났을 때의 증상 및 그 문제점
