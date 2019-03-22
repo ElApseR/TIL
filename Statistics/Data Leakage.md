@@ -4,7 +4,7 @@
 
 ## intro
 <img src="https://mblogthumb-phinf.pstatic.net/20160514_249/padi328366_1463234969276YhM6i_JPEG/%B0%EE%BC%BA2.jpg?type=w800"/>
-data leakage는 데이터를 이용한 예측 모델링을 하다 보면 의도치 않게 흔히 발생하는 문제입니다. 예측 모델링 단계에서 우리의 모델은 정해진 training set 이외의 데이터를 보아서는 안되지만, 그 선을 넘는 데이터를 보았을 때 일반적으로 data leakage가 발생했다고 말합니다. 즉, 우리의 모델이 **보지 말아야 할 것을 보았다**는 의미입니다. 이 글에서는 아래의 내용들을 정리합니다.
+data leakage는 데이터를 이용한 예측 모델링을 하다 보면 의도치 않게 흔히 발생하는 문제입니다. 예측 모델링 단계에서 우리의 모델은 정해진 training set 이외의 데이터를 보아서는 안되지만, 그 선을 넘는 데이터를 보았을 때 일반적으로 data leakage가 발생했다고 말합니다. 즉, 우리의 모델이 *보지 말아야 할 것을 보았다*는 의미입니다. 이 글에서는 아래의 내용들을 정리합니다.
 
 - 예측 모델링에서 data leakage란 무엇인가
 - data leakage가 나타났을 때의 증상 및 그 문제점
@@ -47,7 +47,7 @@ data leakage는 일반적으로 아래 두 방법으로 최소화할 수 있습�
 1. data는 cross validation set 각 fold 안에서만 수행하기
 2. validation set은 정말 최종 of 최종 확인을 위해서 건드리지 말고 깔끔하게 냅두기
 
-### 1. data는 cross validation set 각각의 안에서만 만지기
+#### 1. data는 cross validation set 각각의 안에서만 만지기
 
 (이 항목은 특히 k-fold cross validation을 활용할 때에 포인트가 맞춰진 것 같습니다)  
 data leakage는 일반적으로 모델링에 사용될 데이터를 준비하는 과정에서 발생합니다. 이 경우, training data에 대하여 overfitting이 발생하고, 실제 성능은 좋지 않을 것입니다. 예를 들어보겠습니다.
@@ -56,9 +56,9 @@ data leakage는 일반적으로 모델링에 사용될 데이터를 준비하는
 
 위의 예시의 경우, 데이터 전체(validation set까지 포함)의 변수들의 분포에 대한 정보가 모델 training 과정에서 활용되는 결과를 낳습니다. 이는 validation set의 정보가 일부 포함되어 있는 것이기 때문에, 해당 예측 모델이 validation set의 정보를 이용하는 것과 마찬가지입니다. 이를 피하는 가장 좋은 방법은 standardization을 k-fold cross validation의 각 fold에 대해 수행하는 것입니다. 즉, feature selection, outlier removal, encoding, feature scaling ,projection methods for dimensionality reduction 등의 작업은 각 fold of cross validation마다 수행해야한다는 것입니다.
 
-### 2. Validation set을 깔끔하게 유지하기
+#### 2. Validation set을 깔끔하게 유지하기
 
-사실 가장 쉬운 방법은 이것이 아닐까 하는데, validation set을 아예 건드리지 않는 것입니다. dataset을 training과 validation으로 나눈 뒤, validation이 존재한다는 사실조차 잊고, training만을 이용하여 예측 모델을 생성합니다. 그리고 모든 게 끝난 뒤 비로소 validation을 이용하여 모델을 평가합니다. 위의 1번 경우처럼 standardization을 해야한다면, traing을 이용해서 구한 parameter(평균, 분산 etc.)를 이용해서 validation도 scaling 해주는 것이 진짜 현실 상황에 맞는 것이겠지요. 사실 1번은 k-fold cross validation 상황에 특정된 것 같고, 이 2번을 기억하는 것이 정말 포인트라고 생각합니다.
+사실 가장 쉬운 방법은 이것이 아닐까 하는데, **validation set을 아예 건드리지 않는 것**입니다. dataset을 training과 validation으로 나눈 뒤, validation이 존재한다는 사실조차 잊고, training만을 이용하여 예측 모델을 생성합니다. 그리고 모든 게 끝난 뒤 비로소 validation을 이용하여 모델을 평가합니다. 위의 1번 경우처럼 standardization을 해야한다면, traing을 이용해서 구한 parameter(평균, 분산 etc.)를 이용해서 validation도 scaling 해주는 것이 진짜 현실 상황에 맞는 것이겠지요. 사실 1번은 k-fold cross validation 상황에 특정된 것 같고, 이 2번을 기억하는 것이 정말 포인트라고 생각합니다.
 
 ---
 
