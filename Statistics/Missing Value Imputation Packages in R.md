@@ -1,6 +1,6 @@
 # Missing Value Imputation Packages in R
 
-*지난번에 <a href="https://github.com/ElApseR/TIL/blob/master/Statistics/Missing%20Value%20Imputation.md">Missing Value Imputation</a>을 통해, missing value의 발생 원인과 이를 다루는 다양한 방법들을 알아보았다. 이번에는 missing value imputation에 사용되는 R 패키지들을 알아보도록 하겠다. 이전 글에서 굳이 찾자면 hot deck method에 해당하는 방법들이라 생각된다. *
+*지난번에 <a href="https://github.com/ElApseR/TIL/blob/master/Statistics/Missing%20Value%20Imputation.md">Missing Value Imputation</a>을 통해, missing value의 발생 원인과 이를 다루는 다양한 방법들을 알아보았다. 이번에는 missing value imputation에 사용되는 R 패키지들을 알아보도록 하겠다. *
 
 *이 글은 <a href="https://www.analyticsvidhya.com/blog/2016/03/tutorial-powerful-packages-imputing-missing-values/">Tutorial on 5 Powerful R Packages used for imputing missing values</a>를 참고하였다.*
 
