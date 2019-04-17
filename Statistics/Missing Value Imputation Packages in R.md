@@ -50,3 +50,18 @@ MICE는 'Fully Conditional Specification(FCS)' 모델을 그대로 따르며, �
     - **정말 잘된다**
 
 MICE는 multiple imputation을 염두에 두고 만들어진 패키지이므로, 몇 번의 imputation을 할지가 중요한데, 일반적으로 5~10번 정도 impute한다. 또한, 저자가 명시하지는 않았으나 chain 형식의 모델이 항상 가지는 문제인, 변수마다 model이 적용되는 순서도 영향이 있을 것으로 보인다(이건 multivariate imputation model이 일반적으로 가지는 문제이기도 하다). 개인적으로, single imputation으로 활용되었을 때, 다른 알고리즘에 비해 성능이 좋은지 궁금하다.
+
+
+## 2. Amelia
+
+**Amelia** 는 태평양을 홀로 비행하다 흔적도 없이 사라진 Amelia Earhart의 이름을 따서 지어졌다. 즉, 사라진 value를 찾겠다는 의미이다. Amelia 역시 MICE와 마찬가지로 multiple imputation을 수행하며, 이는 bias와 variance를 줄여주는 장점이 있다. Amelia는 bootstrap을 활용한 EMB 알고리즘을 이용하여 imputation을 수행하며, MICE와 달리 multicore를 parallel하게 활용 가능하기 때문에 빠르게 수행할 수 있다(하지만 실제로 해보니 느렸다...). EMB 알고리즘은 Expectation-Maximization with Bootstrapping의 약자이다. 즉, 기존의 EM을 이용한 방법이며 이에 따라 아래와 같은 parametric한 가정이 필요하다.
+
+- dataset에 포함된 변수들은 Multivariate Normal Distribution(다변량 정규분포)를 따른다.
+- Missing at Random 상황을 가정한다.
+
+Amelia는 m개의 bootstrap sample을 만든 뒤, 이들이 다변량 정규분포를 따른다는 가정 하에 mean 백터와 Variance matrix를 추정한다. 그 뒤, 이를 이용하여 regression 하는 방식으로 missing value를 impute 한다. MICE와 달리 Amelia는 parametric 하므로 아래와 같은 특징이 있다.
+
+- MICE는 chain 방식이므로 한 변수의 imputation이 끝난 뒤 다른 변수를 impute 한다. 하지만 Amelia는 다변량 정규분포를 이용하여 jointly 계산한다.
+- MICE는 위에 언급한 대로 다양한 타입의 변수를 impute 할 수 있으나, Amelia는 각 변수들이 정규분포를 따라야한다(다변량 정규분포를 따르는 변수 각각은 정규분포여야 한다). 만일 그렇지 않다면 정규분포의 형태를 띄도록 transform 시켜줘야 한다.
+
+즉, Amelia를 정말 제대로 쓰기 위해서는 다변량 정규분포를 따를 것으로 생각되는 데이터를 쓰거나, 각 변수가 정규분포를 따르도록 transform 시켜주어야한다.
