@@ -13,6 +13,8 @@
 
 ### Hash funcition
 
+<img src="https://en.wikipedia.org/wiki/Hash_function#/media/File:Hash_table_4_1_1_0_0_1_0_LL.svg">
+
 key값(또는 인덱스)를 어떠한 integer값으로 대응시켜주는 함수이다. 이러한 integer는 fixed array의 위치를 나타낸다. 예를 들어, 자연어 처리의 경우 기존의 방식에서는 각 단어별로 one hot encoding을 한다. 이러한 encoded된 값을 key라고 할 때, 그 키에 맞는 integer를 대응시켜준다(꼭 그런건 아니다 그냥 나의 예시일뿐). text 전처리의 경우 *MurMur3 hash, Jenkins hash, City hash, md5 hash* function이 hash function으로 자주 활용된다.
 
 ## Hashing trick이란?
