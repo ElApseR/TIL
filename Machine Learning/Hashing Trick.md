@@ -1,8 +1,7 @@
 # Hashing Trick
 
 - 참고자료
-    - <a href="https://ko.coursera.org/lecture/machine-learning-applications-big-data/hashing-trick-GswXH">
-Coursera Hashing trick</a>
+    - <a href="https://ko.coursera.org/lecture/machine-learning-applications-big-data/hashing-trick-GswXH">Coursera Hashing trick</a>
 
 - 알아볼 것들
     - 해싱 트릭이란 무엇인가
