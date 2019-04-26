@@ -1,0 +1,52 @@
+# simple and scalable response prediction for display advertising
+
+- 참고
+    - https://programmers.co.kr/learn/courses/21/lessons/1851
+    - https://aldente0630.github.io/data-science/2018/08/26/a-simple-and-scalable-response-prediction-for-display-advertising.html
+    - https://brunch.co.kr/@chris-song/66 -> 톰슨샘플링
+    - http://sanghyukchun.github.io/96/ -> 톰슨샘플링
+    - http://hunch.net/~mltf/parallel_learning.pdf -> all reduce
+
+## 연관 개념
+- explore - exploit tradeoff
+    - 아는 것중 최대의 이익을 주는 애를 선택할 것인가(exploit) 나에게 얼마나 이익을 줄 지 모르지만, 더 높은 이익을 줄 지 모르는 애를 한 번 택해볼 것인가(explore)
+    - action과 reward가 순차적으로 들어오는 상황에서 활용될 수 있는 개념이며, 강화학습의 핵심 개념 중 하나이다.
+    - sutton 교수의 강화학습 책에서 공부했다고 말해주자.
+- Multi Armed Bandit
+    - 카지노에 다양한(multi) 슬롯머신(bandit)이 있는데, 그 중 어느 슬롯머신의 손잡이(arm)을 당겨야 나에게 최대 수익을 보장해줄까를 고안한 알고리즘
+    - 방법 1
+        - greedy algorithm
+            - 슬롯머신을 몇번 해본 뒤 가장 기대수익이 높은 슬롯머신에 몰빵치기
+        - 문제
+            - 충분한 크기의 샘플이 모이지 않았다면 잘못된 선택을 할 수 있다.
+    - 방법 2
+        - epsilon greedy
+            - greedy 하게 수행하되, 일정 확률로 슬롯머신을 랜덤하게 골라서 땡긴다
+        - explore를 덜 하여 발생하는 문제를 해결할 수 있다.
+    - 방법 3
+        - UCB(upper confidence bound)
+            - 완전 랜덤하게 explore 하지 말고, 해당 슬롯머신이 최적일 가능성을 계산해서 선택에 반영해주자
+                - 가능성이 아닌 불확실성, 즉 아직 덜 탐사한 정도라고 생각해도 좋다.
+## Introduction
+- display advertising은 graphical 광고를 publisher의 웹페이지에 거는 데에 돈을 지불하는 광고이다.
+- 과거에는 특정 지면에 길게 괄고를 거는 방식으로 계약했으나, 이제는 spot market 형식으로 거래되며, 이는 publisher의 유동성과 advertiser의 세분화된 고객 타게팅이 가능해짐으로써 변화된 것이다.
+- spot market에서 advertiser는 광고비를 지출하는 여러 option이 있다.
+    - CPM : cost per impression, 즉 광고를 띄우는 횟수에 비례하여 돈을 내는 방식이다. 이는 자신의 브랜드를 단순히 알리는 게 목적이라면 사용하는 옵션 중 하나겠지만, 대부분은 소비자가 자신의 웹사이트에 들어왔을 때 돈을 내기를 바란다.
+    - CPC : cost per click, 즉 소비자가 광고를 클릭하여 advertiser의 웹사이트에 들어온 경우 돈을 내는 방식이다. CPM보다는 더 발전되었으나, 아직 advertiser에게 직접적 이득은 없다.
+    - CPA : cost per conversion, 즉 소비자가 advertiser의 웹사이트에서 지정된 행동(conversion)을 했을 때 돈을 내는 방식이다. 예를 들면 뉴스레터 구독, 회원 가입, 물건 구매 등등을 conversion이라고 볼 수 있다. CPC보다도 발전된 방식으로 이제 진짜 advertiser가 광고하는 목적이 실현되었을 때 돈을 내는 방식이다.
+- platform과 advertiser의 광고를 중개하는 auction은 advertiser의 bid(해당 지면에 대한 가격 제시)를 이용하여 expected price per impression(eCPM), 즉 해당 광고의 노출로 platform이 얻을 수 있는 기대 수익을 계산해야한다.
+    - 만일 과금 옵션이 CPM이었다면 bid와 eCPM이 일치할 것이다. 하지만 CPC, CPA 옵션의 경우 이는 일치하지 않으며 이에 따라 노출시 click 확률, conversion 확률을 정확하게 계산하는 것이 효율적인 마켓을 만드는데에 매우 중요한 부분을 차지한다.
+        - CPC 옵션을 예로 들면 eCPM = bid amount x pCTR(=click/impression, predicted click through rate) 이다.
+- display 광고에서 click과 conversion을 예측하는 것은 검색 광고보다 어렵다.
+    - auctioneer 입장에서는 해당 광고의 내용도 알 수 없고, 연결된 웹사이트의 내용도 알 수 없으며 그 내용이 수시로 바뀔 수도 있다.
+    - display 광고에서는 따라서 고정된 콘텐츠에 대한 정보 등을 전혀 활용할 수 없고, 그저 identifier로만 구분할 수 있다.
+    - 이러한 문제로 엄청난 광고 노출 횟수 등 매우 큰 데이터가 쌓이지만 일반화하기 쉬운 feature가 적어서 상대적으로 sparse한 데이터가 생성되는 심각한 문제가 발생한다. 즉, 데이터는 큰데 담고 있는 information이 적다.
+- 이 논문은 Maximum Entropy(logistic regression) 모델을 활용하여 이처럼 크고 피쳐 갯수도 많은 데이터 셋에 대해 scalable(즉, 큰 데이터도 적은 resource로 처리 가능)한 모델을 만들어냈다.
+    - 이 모델은 쉽게 돌릴 수 있는 회귀 모델로서, 앞서 설명된 우리 데이터의 spasity로부터 발생하는 문제도 해결할 수 있다.
+    - 또한 parallel하게 처리될 수 있다는 장점이 있다.
+    - 추가적인 데이터에 대해 모델을 업데이트 하기 좋으며, exploration 전략을 결합하기도 쉽다.
+        - 후에 나오지만 exploit/exploration dillemma를 해결했다.
+    - 적은 도메인 지식으로도 수행 가능한 자동화된 feature selection 알고리즘을 포함시켰다.
+        - Generalized mutual information을 이용하여 모델에 포함시킬 feature group을 선택하고 feature hashing으로 model 사이즈를 regularize한다.
+- 큰 실험용 데이터로 실험했을 때, 기존의 SOTA 모델을 뛰어넘었으며 매우 단순한 모델이므로 실제 광고 반응 예측 모델로 활용하기 좋다.
+- 2장에서 관련 연구를 살피고, 3장에서는 click과 conversion의 featured의 차이를 언급한 뒤 click-conversion delay를 살펴본다. 4장에서는 maximum entropy 모델과 피쳐 및 hashing trick을 살펴본다. 또한 smoothing과 regularization이 대략적으로 같다라는 결과도 살필 것이다. 5장에서는 우리 모델의 결과를 살펴보고, 6장에서는 modified mutual information을 살펴본 뒤 이를 통해 feature group을 선택했을 때 변하는 점을 살펴본다. 7장에서는 exploration algorithm을 살펴보고 8장에서는 이에 적절한 map-reduce 방법을 살펴본 뒤, 9장에서 정리하며 끝난다.
