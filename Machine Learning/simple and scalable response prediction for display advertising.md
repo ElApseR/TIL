@@ -50,3 +50,81 @@
         - Generalized mutual information을 이용하여 모델에 포함시킬 feature group을 선택하고 feature hashing으로 model 사이즈를 regularize한다.
 - 큰 실험용 데이터로 실험했을 때, 기존의 SOTA 모델을 뛰어넘었으며 매우 단순한 모델이므로 실제 광고 반응 예측 모델로 활용하기 좋다.
 - 2장에서 관련 연구를 살피고, 3장에서는 click과 conversion의 featured의 차이를 언급한 뒤 click-conversion delay를 살펴본다. 4장에서는 maximum entropy 모델과 피쳐 및 hashing trick을 살펴본다. 또한 smoothing과 regularization이 대략적으로 같다라는 결과도 살필 것이다. 5장에서는 우리 모델의 결과를 살펴보고, 6장에서는 modified mutual information을 살펴본 뒤 이를 통해 feature group을 선택했을 때 변하는 점을 살펴본다. 7장에서는 exploration algorithm을 살펴보고 8장에서는 이에 적절한 map-reduce 방법을 살펴본 뒤, 9장에서 정리하며 끝난다.
+
+## 2. Related Work
+- user의 반응을 예측하는 모델은 대부분 유저의 반응에 영향을 줄 가능성이 있는 피쳐를 모두 포함한다.
+    - context features
+        - 검색엔진에 입력한 검색어 또는 publisher의 페이지
+    - content features
+    - User features
+    - feedback features
+        - 과거 데이터를 통해 얻어지는 것들
+- 위의 피쳐가 항상 얻어질 수 있는 것은 아니다. 광고주와 publisher의 정보는 단순히 dummy 형태로 사용되는 경우가 많으며 이는 피쳐의 dimension이 매우 커지게 한다.
+    - 이를 해결하기 위해 mutual information이나 유사한 filter 기법들이 활용되며 최근에는 feature hashing으로 데이터를 저차원으로 projection 시키는 방법도 활용되고 있다.
+- 로지스틱 회귀와 의사결정나무는 광고 모델링 논문에서  자주 활용되는 모델이다. 하지만 categorical 변수 각각이 다수의 value를 가지며 데이터가 sparse 하기 때문에 의사결정나무를 잘 fitting 시키기 어렵다. 또한 computational cost도 높아서 사용하기 힘들다.
+    - data가 sparse하다는 것은 데이터가 존재하는 공간 중 데이터가 차지하는 부분이 너무 적다는 것이다.
+    - 각 카테고리가 가지는 값이 너무 많은 것이 결국 sparsity의 원인이다. 이로 인해 카테고리의 각 value별로 나타나는 비율이 적고, 이러한 카테고리가 여러 개 모이면 공간 상에 점이 조금씩, 굉장히 산발적으로 퍼져있게 된다.
+    - 로지스틱 회귀는 parallelize도 쉬워서 큰 데이터에 활용하기 좋다. 우리는 이에 더불어 thompson sampling을 결합할 것이다.
+- sparse한 데이터를 이용하여 user의 반응을 predict 하는 연구는 기존에 다양하게 있었으나, 주로 검색 광고쪽이었다.
+    - 최근에 display advertise 에 대해서도 이를 다루는 논문이 나왔으며, 이는 hierarchical한 structure를 이용하여 sparse data 상황을 극복하는 것이었다.
+    - 우리는 L2 regularization과 결합된 logistic regression이 결과적으로 hierarchical smoothing과 같아진다는 것을 4.8장에서 다룬다.
+- 따라서 이 논문은 conjunction feature를 이용하며, regularization을 활용하여 feature간 관계를 활용하고(exploit), hashing으로 모델의 크기를 조정한다.
+    - 우리 모델은 도메인 지식이 적게 필요하고 리소스를 적게 활용하며 실행하기 쉽다.
+## 3. DATA AND FEATURES
+- 3.1
+    - 야후 RMX 데이터를 활용할 것이다.
+    - RMX는 network of network 모델을 쓴다.
+- 3.2
+    - click : 유저가 마우스 클릭과 같은 방법으로 광고를 누르는 것
+        - CTR (click through rate)을 이용하여 측정된다.
+    - PCC : 클릭 후에 페이지에 방문해서 광고주가 원하는 행동을 하는 것
+        - CVR(conversion rate)을 이용하여 측정된다.
+- 3.3
+    - advertiser, publisher, user, time 피쳐를 사용한다.
+    - event level(impression, click, conversion)에서 피쳐들이 수집됨
+- 3.4
+    - conversion이 발생할 때, 그것을 유도한 click과 연결해주는 것이 중요하다. 그래야 데이터 결합이 가능하다.
+    - 대략 이틀로 click-conversion delay를 제한하면 98.5%의 사람이 제대로 연결된다.
+        - 1.5%를 희생하는 것이 득보다 실이 크다.
+    - click은 impression과 바로 매칭이 되어 쉽다. 대부분(97%) impression 1분 이내에 click한다.
+        - 어떤 페이지에서 들어오는지 보면 되니까
+## 4. Modeling
+- 4.1 logistic regression
+    - maximum entropy라고 알려진 로지스틱 회귀 사용한다.
+    - x는 0또는 1 값을 가지며, y는 1 또는 -1 값을 가진다.
+    - L2 정규화가 포함된 negative log likelihood를 활용한다.
+        - y를 bernouli prior를 주면 된다.
+- 4.2 categorical variable
+    - dummy화 해서 활용한다.
+- 4.3 hashing trick
+    - 데이터의 차원을 줄여준다.
+    - 각 피쳐별로 다른 차원에 hashing 해서 concat 하는 방법도 있지만, 우리는 전부 같은 차원에 hashing해서 elementwise sum 해준다.
+- 4.4 collision analysis
+    - collision으로 log likelihood가 max되지 못하는 상황이 발생한다.
+    - 두 가지 최악의 상황이 나오는데, 첫 번째는 뭔소린지 잘 모르겠고, 두 번째는 다른 feature가 많으면 좀 완화된다는 것이다.
+        - 따라서 우리는 collision을 완화하기 위해 Bloom filter와 같은 multiple hash function을 활용해보았으나, 이는 큰 성능 차이가 없었다.
+- 4.5 conjunction
+    - 변수간의 결합된 효과를 보기 위해 conjunction(interaction)항을 추가한다. 쉽게 말해 곱변수를 추가해준다.
+    - conjunction은 자주 사용되는 방법이지만, 우리의 경우 feature 갯수가 너무 많아서 conjunction 하면 기하급수적으로 피쳐 갯수가 늘어난다.
+        - hashing을 통해 feature 갯수를 줄여준다.
+    - 하지만 conjunction을 hashing하면 큰 문제가 발생하는데, 자주 나오지 않는 conjunction이 발생했을 때 이것의 hash 값이 collide된 값이라면 그 의미가 다르게 받아들여질 수 있다.
+        - 이를 해결하기 위한 방법들이 등장할 것으로 기대한다.
+- 4.6 multitask learning
+    - multitask learning과 conjunction이 포함된 우리의 single model이 같다.
+    - 왜 같다는건지 잘 모르겠다
+    - 뭐 결과적으로 우리 모델이 다양한 task를 한 번에 수행할 수 있다?
+- 4.7 Subsampling
+    - click은 매우 희소한 확률로 발생하기 때문에 클릭이 발생하지 않는 경우를 더 적게 사용하는 subsampling을 활용하여 모델 학습을 돕는다.
+    - 이때 fitting되는 파라미터의 절편에 logr을 더해주어야한다.
+- 4.8 Regularization and Smoothing
+    - 4.8.1 single feature
+        - 우리 regularization은 laplace smoothing과 같은 효과를 가진다.
+        - 따라서 데이터가 부족한 상황에서도 안정적으로 fitting된다.
+    - 4.8.2 hierarchical
+        - advertiser와 그의 campaign이 있다고 해보자. 이 둘은 서로 hierarchical 관계이다.
+        - advertiser의 데이터는 많은데 특정 campaign의 데이터는 너무 적다면?
+            - regularization에 의해 해당 campaign의 weight는 0에 매우 가까워질 것이다.
+            - 따라서 advertiser의 특성에 더 의존하게 된다.
+        - 위의 4.8.1 상황과는 다르게 0.5가 아닌 parent feature(advertiser)로 인한 output probability에 가까워지도록 smoothing 된다는 점만 차이가 있다.
+- 4.9 Bayesian Logistic Regressn
+    - 로지스틱 회귀의 negative log likelihood의 해는 logistic likelihood에 weight가 gaussian prior(std=1/sqrt(lambda))를 가진다고 가정했을 때의 MAP와 동일하다.
