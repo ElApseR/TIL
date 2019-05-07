@@ -8,4 +8,4 @@
 
 이 중 2번의 경우에 대하여 정상고객(대부분을 차지하는 label)을 r의 비율만큼 subsampling한 뒤 logistic regression 모델을 fitting할 경우 bias가 발생하며 이를 사후적으로 보정해주어야 한다. 이를 유도한 과정은 아래와 같다.
 
-<img src="img/subsampling.pdf">
+<img src="/img/subsampling.pdf">
