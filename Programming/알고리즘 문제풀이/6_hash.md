@@ -91,3 +91,48 @@ def solution(record):
 
     return answer
 ~~~
+
+### 문제 2 - 납치범 단어 오리기
+
+- 문제 출처
+    - <a href="https://www.hackerrank.com/challenges/ctci-ransom-note/problem?h_l=interview&isFullScreen=false&playlist_slugs%5B%5D%5B%5D%5B%5D%5B%5D%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D%5B%5D%5B%5D%5B%5D%5B%5D=dictionaries-hashmaps">hackerrank - Hash Tables: Ransom Note</a>
+
+Harold is a kidnapper who wrote a ransom note, but now he is worried it will be traced back to him through his handwriting. He found a magazine and wants to know if he can cut out whole words from it and use them to create an untraceable replica of his ransom note. The words in his note are case-sensitive and he must use only whole words available in the magazine. He cannot use substrings or concatenation to create the words he needs.
+
+Given the words in the magazine and the words in the ransom note, print Yes if he can replicate his ransom note exactly using whole words from the magazine; otherwise, print No.
+
+For example, the note is "Attack at dawn". The magazine contains only "attack at dawn". The magazine has all the right words, but there's a case mismatch. The answer is **No**.
+
+Function Description
+
+Complete the checkMagazine function in the editor below. It must print **Yes** if the note can be formed using the magazine, or **No**.
+
+checkMagazine has the following parameters:
+
+- magazine: an array of strings, each a word in the magazine
+- note: an array of strings, each a word in the ransom note
+
+즉 magazine에 포함된 단어들로 보내려는 협박편지를 만들 수 있는지를 찾는 문제. 이때, 단어가 존재한다는 사실 뿐만 아니라 단어의 갯수도 신경써야한다. 이를 위해 hash table로 존재하는 단어들과 사용 가능한 횟수를 관리한다. a in list_b 보다 a in dict_keys_b 가 훨씬 빠르다는 것에 주의하자. dictionary로 만들면 중복단어가 하나로 합쳐지기 때문에 훨씬 빨라지기 때문이다. 자체적으로 더 빠른 이유도 있는지는 확인을 못해보았다.
+
+~~~python
+def checkMagazine(magazine, note):
+    # make magazine word dict
+    mag_word_dict = {}
+    for word in magazine:
+        if word in mag_word_dict:
+            mag_word_dict[word] += 1
+        else:
+            mag_word_dict[word] = 1
+
+    # check words in ransom note
+    for word in note:
+        if word in mag_word_dict:
+            mag_word_dict[word] -= 1
+            if mag_word_dict[word] == -1: #used more than accepted
+                print('No')
+                return
+        else:
+            print('No')
+            return
+    print('Yes')
+~~~
