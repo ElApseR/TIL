@@ -14,9 +14,10 @@
 - 따라서 모델 기반의 imputation이 필요하며, R에서는 크게 다섯 가지의 패키지가 유명하다.
     1. MICE
     2. Amelia
-    3. missForest
-    4. Hmisc
-    5. mi
+    3. softImpute
+    4. missForest
+    5. Hmisc
+    6. mi
 
 
 ## 1. MICE
@@ -65,3 +66,9 @@ Amelia는 m개의 bootstrap sample을 만든 뒤, 이들이 다변량 정규분�
 - MICE는 위에 언급한 대로 다양한 타입의 변수를 impute 할 수 있으나, Amelia는 각 변수들이 정규분포를 따라야한다(다변량 정규분포를 따르는 변수 각각은 정규분포여야 한다). 만일 그렇지 않다면 정규분포의 형태를 띄도록 transform 시켜줘야 한다.
 
 즉, Amelia를 정말 제대로 쓰기 위해서는 다변량 정규분포를 따를 것으로 생각되는 데이터를 쓰거나, 각 변수가 정규분포를 따르도록 transform 시켜주어야한다.
+
+
+## 3. softImpute
+
+**softImpute** 는 svd와 nuclear-norm regularization을 활용한 matrix completion 을 통해 missing value를 impute 한다. 이렇게 말하면 잘 와닿지 않는데, Netflix prize 문제에서 가장 성능이 좋았던 알고리즘과 동일한 것이다. 즉, 추천시스템과 기본적으로 동일하다. Netflix를 예로 들면, netflix 데이터의 각 행은 사용자이고 각 열은 영화이다. 이 중 사용자가 별점을 메긴 영화는 데이터가 있지만 그렇지 않은 곳은 비어있다(즉, missing이다). 따라서 사용자가 해당 영화에 대해 메길 별점을 예측하고 가장 높은 별점을 추천하는 것은 결국 missing value를 impute 하는 것과 동일한 문제이다. SVD는 이를 위한 방법이며 nucleus-norm은 그 optimization function이다. 이것 역시 iterative한 방법이라 cran에서는 EM-flavor(빠빠빨간맛)를 가진 알고리즘이라고 소개하고 있지만, parametric한 방법은 아니기 때문에 완벽히 EM이라고 말하기는 힘들다. EM은 아니라는 비판을 피하기 위해 flavor를 쓴 것 같다.
+SVD를 이용한 matrix completion은 <a href="http://sanghyukchun.github.io/73/">SanghyukChun's Blog</a>에서 확인할 수 있다.
