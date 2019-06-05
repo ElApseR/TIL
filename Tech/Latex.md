@@ -8,10 +8,10 @@ Latex으로 논문을 작성할 때 긴 수식을 작성하는 경우 자동 줄
 #### 1. multiline 활용하기
 
 ~~~latex
-    \begin{multline}
-        p(x) = 3x^6 + 14x^5y + 590x^4y^2 + 19x^3y^3\\
-        - 12x^2y^4 - 12xy^5 + 2y^6 - a^3b^3
-    \end{multline}
+\begin{multline}
+    p(x) = 3x^6 + 14x^5y + 590x^4y^2 + 19x^3y^3\\
+    - 12x^2y^4 - 12xy^5 + 2y^6 - a^3b^3
+\end{multline}
 ~~~
 
 이 경우, 줄 바꿈 된 아래 수식은 오른쪽으로 정렬된다.
