@@ -52,6 +52,24 @@ MICE는 'Fully Conditional Specification(FCS)' 모델을 그대로 따르며, �
 
 MICE는 multiple imputation을 염두에 두고 만들어진 패키지이므로, 몇 번의 imputation을 할지가 중요한데, 일반적으로 5~10번 정도 impute한다. 또한, 저자가 명시하지는 않았으나 chain 형식의 모델이 항상 가지는 문제인, 변수마다 model이 적용되는 순서도 영향이 있을 것으로 보인다(이건 multivariate imputation model이 일반적으로 가지는 문제이기도 하다). 개인적으로, single imputation으로 활용되었을 때, 다른 알고리즘에 비해 성능이 좋은지 궁금하다.
 
+###  1-1. Fully Conditional Specification(FCS)
+
+MICE를 좀더 제대로 이해하기 위해 FCS를 알 필요가 있다. FCS는 MICE를 만든 Van Buuren이 개발한 방법이다. FCS의 특징은 이전의 joint distribution을 활용한 imputation 방법과 달리 conditional distribution을 활용한다는 것이다. Missing value imputation 계의 아버지라고 생각되는 **Rubin** 은 missing value imputation의 과정을 아래 세 개로 정리할 수 있다고 하였다.
+
+1. modeling - 데이터에 맞는 분포 정하기
+2. estimation - 정해진 분포의 모수에 대한 posterior 구하기
+3. imputation - 모수의 posterior에서 모수 추출, 이를 이용한 데이터 분포에서 값 추출
+
+기존 방법들이 modeling에서 joint 분포를 가정했다면, 이제 FCS는 conditional 분포를 가정하는 것이다(정확히 말하자면 multivariate 분포를 가정하지만 이를 실제로 유도할 때 conditional 분포를 활용하는 것이다). MICE의 경우 변수의 종류에 맞게 conditional 분포의 형태를 자동으로 가정해준다. 이제 가정된 conditional distribution을 관측된 데이터에 맞게 적합시켜야 하는데, 이때 MCMC를 활용한다. 좀더 자세히 말하면 MCMC 중에서 특히 gibbs sampling을 활용한다. Gibbs sampling은 변수를 순서대로 update 하는 것이다.
+
+```
+ex)Y_{j}^{t} | X,Y_{1}^{t},...Y_{j-1}^{t},Y_{j+1}^{t-1},Y_{p}^{t-1}
+```
+
+t=0번째 step에서는 random seed 값에 따라 임의값을 넣어주며, 이 값에 의해 수렴점이 바뀔 수 있기 때문에 seed를 바꿔가며 multiple imputation 해준다. 하지만 gibbs sampling의 특성상 변수의 순서가 영향을 미친다는 것은 자명한 것으로 보인다.
+
+
+
 
 ## 2. Amelia
 
