@@ -85,7 +85,7 @@ missing value는 연습용 데이터가 아닌 현실 데이터에 매우 자주
 3. Connected vs unconnected
     - Connected하다는 것은 관측된 데이터 포인트가 다른 데이터 포인트에서 위아래 또는 좌우로 이동해서 전부 닿을 수 있는 경우를 의미한다. 즉, 체스의 rook의 움직임을 생각하면 된다.
 
-<img src='/img/missing_patter'>
+<img src='img/missing_pattern.png'>
 
 위 그림에서 모든 경우는 connected이다. connected의 장점은 알려지지 않는 모수를 찾는 것이 가능하다는 것이다. 예를 들어 위에서 file matching의 경우, 2번째와 3번째 열은 서로 correlation을 구할 수 없다. 하지만 전부 관측된 첫 번째 열을 이용하여 우회적으로 correlation을 구할 수 있다.
 
