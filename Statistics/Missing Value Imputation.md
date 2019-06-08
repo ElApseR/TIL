@@ -75,3 +75,18 @@ missing value는 연습용 데이터가 아닌 현실 데이터에 매우 자주
         - 5-10개의 추정된 mu
     3. analysis의 결과를 aggregate하여 최종 결과를 도출하고, aggregated 되기 전 애들을 분석해본다. 얘네의 standard deviation을 분석하는 것이 대표적이며, standard deviation이 imputation 단계에서 뽑힌 데이터셋이 대표성을 가지고 있는지, 해당 imputation method가 적절했는지 생각해보아야 한다.
         - 최종적인 하나의 mu
+
+## 3. missing data pattern
+
+1. univariate vs multivariate
+    - 데이터의 한 변수에만 결측값이 있는가 여러 변수에 있는가
+2. Monotone vs non-monotone 
+    - monotone missing의 경우, j번째 열 Y_{j}가 결측이면 Y_{k}(k>j)도 모두 결측인 경우를 의미한다. 주로 longitudinal 데이터에서 특정 시점 이후에는 모두 측정이 되지 않는 경우에 많이 발생한다.
+3. Connected vs unconnected
+    - Connected하다는 것은 관측된 데이터 포인트가 다른 데이터 포인트에서 위아래 또는 좌우로 이동해서 전부 닿을 수 있는 경우를 의미한다. 즉, 체스의 rook의 움직임을 생각하면 된다.
+
+<img src='img/missing_patter'>
+
+위 그림에서 모든 경우는 connected이다. connected의 장점은 알려지지 않는 모수를 찾는 것이 가능하다는 것이다. 예를 들어 위에서 file matching의 경우, 2번째와 3번째 열은 서로 correlation을 구할 수 없다. 하지만 전부 관측된 첫 번째 열을 이용하여 우회적으로 correlation을 구할 수 있다.
+
+
