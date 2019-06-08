@@ -5,6 +5,7 @@ missing value는 연습용 데이터가 아닌 현실 데이터에 매우 자주
 - 참고
     - <a href="https://towardsdatascience.com/how-to-handle-missing-data-8646b18db0d4">How to Handle Missing Data</a>
     - <a href="https:// https://www.youtube.com/watch?v=XnnA9z7lv4Q"> Missing Data Mechanisms(Youtube)</a>
+    - <a href="https://stefvanbuuren.name/publication/2018-01-01_vanbuuuren2018/"> Flexible Imputation of Missing Data</a>
 
 ---
 
